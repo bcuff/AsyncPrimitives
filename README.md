@@ -19,3 +19,24 @@ public class SomeClass
     }
 }
 ```
+
+##Async ReaderWriterLock
+```c#
+_gate = new AsyncReaderWriterLock();
+
+public async Task ModifyResource()
+{
+    using(await _gate.OpenWriter())
+    {
+        // ... do something to modify a protected resource ...
+    }
+}
+
+public async Task<string> GetResource()
+{
+    using(await _gate.OpenReader())
+    {
+        // ... do something to obtain a protected resource ...
+    }
+}
+```

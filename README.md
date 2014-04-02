@@ -4,6 +4,21 @@ AsyncPrimitives
 Async concurrency primitives for .NET
 
 ##Async Semaphore
+
+###Methods
+
+####Wait
+`public Task Wait()`
+Waits until the count is greater than 0 then enters the semaphore. Decrements the count upon entry.
+
+####WaitAndSignal
+`public Task<IDisposable> WaitAndSignal()`
+Waits (as above) then returns an `IDisposable`. When the return value is disposed `void Signal()` is called.
+
+####Signal
+`public void Signal(int count = 1)`
+Increments the count by the specified number and releases the corresponding number of waiters (if there are any waiters).
+
 ```c#
 public class SomeClass
 {

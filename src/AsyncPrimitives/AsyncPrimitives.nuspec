@@ -6,7 +6,7 @@
     <title>Async Concurrency Primitives for .NET</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>https://github.com/bcuff/AsyncPrimitives/blob/master/LICENSE</licenseUrl>
+    <licenseUrl>https://github.com/bcuff/AsyncPrimitives/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/bcuff/AsyncPrimitives</projectUrl>
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

@@ -11,12 +11,12 @@ Async concurrency primitives for .NET
 `public Task Wait()`
 Waits until the count is greater than 0 then enters the semaphore. Decrements the count upon entry.
 
-####WaitAndSignal
-`public Task<IDisposable> WaitAndSignal()`
-Waits (as above) then returns an `IDisposable`. When the return value is disposed `void Signal()` is called.
+####WaitAndRelease
+`public Task<IDisposable> WaitAndRelease()`
+Waits (as above) then returns an `IDisposable`. When the return value is disposed `void Release()` is called.
 
-####Signal
-`public void Signal(int count = 1)`
+####Release
+`public void Release(int count = 1)`
 Increments the count by the specified number and releases the corresponding number of waiters (if there are any waiters).
 
 ```c#
@@ -26,7 +26,7 @@ public class SomeClass
     
     public async Task DoSomethingAsync()
     {
-        using(await _semaphore.WaitAndSignal())
+        using(await _semaphore.WaitAndRelease())
         {
             // only 3 callers can run this at a time
             // ...

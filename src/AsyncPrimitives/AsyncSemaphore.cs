@@ -35,12 +35,12 @@ namespace AsyncPrimitives
             });
         }
 
-        public Task<IDisposable> WaitAndSignal()
+        public Task<IDisposable> WaitAndRelease()
         {
             return Wait(new Waiter
             {
                 Source = new TaskCompletionSource<IDisposable>(),
-                Result = new SignalDisposable(this),
+                Result = new ReleaseDisposable(this),
             });
         }
 
@@ -69,7 +69,7 @@ namespace AsyncPrimitives
             return waiter.Source.Task;
         }
 
-        public void Signal(int count = 1)
+        public void Release(int count = 1)
         {
             for (; count > 0; --count)
             {
@@ -98,11 +98,11 @@ namespace AsyncPrimitives
             public IDisposable Result;
         }
 
-        private class SignalDisposable : IDisposable
+        private class ReleaseDisposable : IDisposable
         {
             AsyncSemaphore _semaphore;
 
-            public SignalDisposable(AsyncSemaphore semaphore)
+            public ReleaseDisposable(AsyncSemaphore semaphore)
             {
                 _semaphore = semaphore;
             }
@@ -110,7 +110,7 @@ namespace AsyncPrimitives
             public void Dispose()
             {
                 if (_semaphore == null) return;
-                _semaphore.Signal();
+                _semaphore.Release();
                 _semaphore = null;
             }
         }

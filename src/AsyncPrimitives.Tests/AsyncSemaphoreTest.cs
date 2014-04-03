@@ -26,18 +26,18 @@ namespace AsyncPrimitives.Tests
             Assert.AreEqual(false, result.IsCompleted);
             Assert.AreEqual(0, semaphore.Count);
 
-            semaphore.Signal();
+            semaphore.Release();
             result.Wait();
             Assert.AreEqual(true, result.IsCompleted);
             Assert.AreEqual(0, semaphore.Count);
 
-            semaphore.Signal();
+            semaphore.Release();
             Assert.AreEqual(1, semaphore.Count);
 
-            semaphore.Signal();
+            semaphore.Release();
             Assert.AreEqual(2, semaphore.Count);
 
-            semaphore.Signal();
+            semaphore.Release();
             Assert.AreEqual(3, semaphore.Count);
         }
 
@@ -46,11 +46,11 @@ namespace AsyncPrimitives.Tests
         {
             var semaphore = new AsyncSemaphore(0);
 
-            var task = semaphore.WaitAndSignal();
+            var task = semaphore.WaitAndRelease();
             Assert.AreEqual(false, task.IsCompleted);
             Assert.AreEqual(0, semaphore.Count);
 
-            semaphore.Signal(3);
+            semaphore.Release(3);
 
             var disposable = task.Result;
             Assert.AreEqual(2, semaphore.Count);

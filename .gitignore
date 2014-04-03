@@ -109,3 +109,6 @@ UpgradeLog*.XML
 
 # Vim temp files
 *~
+
+# nuget packages
+*.nupkg

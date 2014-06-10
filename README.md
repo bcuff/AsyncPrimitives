@@ -55,3 +55,20 @@ public async Task<string> GetResource()
     }
 }
 ```
+
+##AsyncLazy&lt;T&gt;
+```c#
+var lazy = new AsyncLazy<string>(async () =>
+{
+	using(var client = new WebClient())
+	{
+		return await client.DownloadStringTaskAsync("http://google.com");
+	}
+});
+
+// first time actually downloads http://google.com
+var html = await lazy;
+
+// second time gets it from memory
+var html2 = await lazy;
+```

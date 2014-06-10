@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AsyncLazyTest.cs" />
     <Compile Include="AsyncReaderWriterLockTest.cs" />
     <Compile Include="AsyncSemaphoreTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

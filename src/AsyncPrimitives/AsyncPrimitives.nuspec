@@ -11,7 +11,7 @@
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added AsyncLazy&lt;T&gt; class.</releaseNotes>
+    <releaseNotes>Added KeyedLazyInitializer&lt;TKey, TValue&gt; class.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>lock locks concurrency async await task</tags>
   </metadata>

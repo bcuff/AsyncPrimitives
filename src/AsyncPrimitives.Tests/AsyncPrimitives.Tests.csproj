@@ -53,6 +53,7 @@
     <Compile Include="AsyncLazyTest.cs" />
     <Compile Include="AsyncReaderWriterLockTest.cs" />
     <Compile Include="AsyncSemaphoreTest.cs" />
+    <Compile Include="KeyedLazyInitializerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

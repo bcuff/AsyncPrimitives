@@ -47,7 +47,7 @@ namespace AsyncPrimitives
         }
 
         /// <summary>
-        /// Gets the <see cref="TValue"/> with the specified key.
+        /// Gets the Value with the specified key.
         /// </summary>
         /// <value>The value for the specified key.</value>
         public TValue this[TKey key]

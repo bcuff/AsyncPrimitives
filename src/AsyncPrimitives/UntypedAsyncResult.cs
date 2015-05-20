@@ -22,7 +22,7 @@ namespace AsyncPrimitives
             }, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
         }
 
-        protected override Task Task
+        internal override Task Task
         {
             get { return _task; }
         }

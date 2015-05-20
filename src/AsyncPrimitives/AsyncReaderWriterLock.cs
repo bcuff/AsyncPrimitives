@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AsyncPrimitives
 {
+    /// <summary>
+    /// Encapsulates an async reader/writer lock.
+    /// </summary>
     public class AsyncReaderWriterLock
     {
         // >=1 = # of readers
@@ -15,6 +18,10 @@ namespace AsyncPrimitives
         List<Waiter> _waitingReaders = new List<Waiter>();
         readonly Queue<Waiter> _waitingWriters = new Queue<Waiter>();
 
+        /// <summary>
+        /// Opens the read lock.
+        /// </summary>
+        /// <returns>A task that completes when the read lock is open. The IDisposable must be disposed to release the lock.</returns>
         public Task<IDisposable> OpenReader()
         {
             var reader = new Waiter(this, false);
@@ -39,6 +46,10 @@ namespace AsyncPrimitives
             return reader.CompletionSource.Task;
         }
 
+        /// <summary>
+        /// Opens the write lock.
+        /// </summary>
+        /// <returns>A task that completes when the write lock is open. The IDisposable must be disposed to release the lock.</returns>
         public Task<IDisposable> OpenWriter()
         {
             var writer = new Waiter(this, true);

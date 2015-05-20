@@ -5,8 +5,18 @@ using System.Text;
 
 namespace AsyncPrimitives
 {
+    /// <summary>
+    /// Encapsulates settings for the ConsistentHashMap.
+    /// </summary>
+    /// <typeparam name="TKey">The type of keys in the map.</typeparam>
+    /// <typeparam name="TValue">The type of values in the map.</typeparam>
     public class ConsistentHashMapSettings<TKey, TValue>
     {
+        /// <summary>
+        /// Creates a hash function from a HashAlgorithm factory.
+        /// </summary>
+        /// <param name="hashAlgorithmFactory">A factory method that produces HashAlgorthm implementations.</param>
+        /// <returns>A hash function.</returns>
         public static Func<string, ulong> CreateHashFunction(Func<HashAlgorithm> hashAlgorithmFactory)
         {
             return key =>
@@ -38,6 +48,9 @@ namespace AsyncPrimitives
         }
 
         private Func<string, ulong> _hashFunction;
+        /// <summary>
+        /// The function to use for hashing node names and keys.
+        /// </summary>
         public Func<string, ulong> HashFunction
         {
             get { return _hashFunction ?? CreateHashFunction(MD5.Create); }
@@ -45,6 +58,9 @@ namespace AsyncPrimitives
         }
 
         private Func<TValue, int> _virtualNodeCountProvider;
+        /// <summary>
+        /// The function that provides the number of virtual nodes each host is alloted.
+        /// </summary>
         public Func<TValue, int> VirtualNodeCountProvider
         {
             get { return _virtualNodeCountProvider ?? (v => 1000); }
@@ -52,6 +68,9 @@ namespace AsyncPrimitives
         }
 
         private Func<TValue, string> _valueHashDataProvider;
+        /// <summary>
+        /// The function that provides a string from a value to hash.
+        /// </summary>
         public Func<TValue, string> ValueHashDataProvider
         {
             get { return _valueHashDataProvider ?? (v => v.ToString()); }
@@ -59,6 +78,9 @@ namespace AsyncPrimitives
         }
 
         private Func<TKey, string> _keyHashDataProvider;
+        /// <summary>
+        /// The function that provides a string from a key to hash.
+        /// </summary>
         public Func<TKey, string> KeyHashDataProvider
         {
             get { return _keyHashDataProvider ?? (k => k.ToString()); }

@@ -5,6 +5,11 @@ using System.Linq;
 
 namespace AsyncPrimitives
 {
+    /// <summary>
+    /// Encapsulates a hash ring implementation.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the keys.</typeparam>
+    /// <typeparam name="TValue">The type of values in the map.</typeparam>
     public class ConsistentHashMap<TKey, TValue>
     {
         private static readonly int _nodePrefixPadding = int.MaxValue.ToString().Length;
@@ -13,11 +18,20 @@ namespace AsyncPrimitives
         private readonly Node[] _hashCircle;
         private readonly TValue[] _values;
 
+        /// <summary>
+        /// Initializes a new instances of the ConsistentHashMap class.
+        /// </summary>
+        /// <param name="values">The values in the map.</param>
         public ConsistentHashMap(IEnumerable<TValue> values)
             : this(values, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instances of the ConsistentHashMap class.
+        /// </summary>
+        /// <param name="values">The values in the map.</param>
+        /// <param name="settings">The map settings.</param>
         public ConsistentHashMap(IEnumerable<TValue> values, ConsistentHashMapSettings<TKey, TValue> settings)
         {
             if (values == null) throw new ArgumentNullException("values");
@@ -121,12 +135,22 @@ namespace AsyncPrimitives
             return 0;
         }
 
+        /// <summary>
+        /// Gets the primary node for the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>The primary node for the specified key.</returns>
         public TValue Get(TKey key)
         {
             var startIndex = GetStartIndex(key);
             return _values[_hashCircle[startIndex].ValueIndex];
         }
 
+        /// <summary>
+        /// Gets nodes for the specified key, in the order they should be visited.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>Nodes for the specified key.</returns>
         public IEnumerable<TValue> GetMany(TKey key)
         {
             var count = Count;
@@ -151,14 +175,19 @@ namespace AsyncPrimitives
             }
         }
 
+        /// <summary>
+        /// Gets all values in the map without regard for order.
+        /// </summary>
+        /// <returns>All values in the map.</returns>
         public IEnumerable<TValue> GetAllUnsorted()
         {
             return _values;
         }
 
+        /// <summary>
+        /// The number of items in the map.
+        /// </summary>
         public int Count { get; private set; }
-
-        public int HashCollisionCount { get; private set; }
 
         private class NodeComparer : IComparer<Node>
         {

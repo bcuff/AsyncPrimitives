@@ -5,38 +5,52 @@ using System.Threading.Tasks;
 
 namespace AsyncPrimitives
 {
+    /// <summary>
+    /// An IAsyncResult implementation that you can use to implement APM with tasks.
+    /// </summary>
     public abstract class TaskAsyncResult : IAsyncResult
     {
         internal TaskAsyncResult() { }
 
-        protected abstract Task Task { get; }
+        internal abstract Task Task { get; }
 
+        /// <inheritdoc />
         public object AsyncState
         {
             get { return Task.AsyncState; }
         }
 
+        /// <inheritdoc />
         public WaitHandle AsyncWaitHandle
         {
             get { return ((IAsyncResult)Task).AsyncWaitHandle; }
         }
 
+        /// <inheritdoc />
         public bool CompletedSynchronously
         {
             get { return ((IAsyncResult)Task).CompletedSynchronously; }
         }
 
+        /// <inheritdoc />
         public bool IsCompleted
         {
             get { return Task.IsCompleted; }
         }
 
+        /// <summary>
+        /// Ends the operation. Call this in your own End method when implementing APM.
+        /// </summary>
         public void End()
         {
             Task.Wait();
         }
     }
 
+    /// <summary>
+    /// An IAsyncResult implementation that you can use to implement APM with tasks.
+    /// </summary>
+    /// <typeparam name="T">The type to return in the End method.</typeparam>
     public sealed class TaskAsyncResult<T> : TaskAsyncResult
     {
         readonly Task<T> _task;
@@ -54,12 +68,16 @@ namespace AsyncPrimitives
             }, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
         }
 
+        /// <summary>
+        /// Ends the operation and returns the result. Call this in your own End method when implementing APM.
+        /// </summary>
+        /// <returns>The result.</returns>
         public new T End()
         {
             return ((Task<T>)Task).Result;
         }
 
-        protected override Task Task
+        internal override Task Task
         {
             get { return _task; }
         }

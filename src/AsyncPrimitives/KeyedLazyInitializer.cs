@@ -58,11 +58,12 @@ namespace AsyncPrimitives
                 if (_values.TryGetValue(key, out result)) return result;
                 lock (_syncRoot)
                 {
-                    if (_values.TryGetValue(key, out result)) return result;
+                    var values = _values;
+                    if (values.TryGetValue(key, out result)) return result;
 
                     var newValue = _valueFactory(key);
-                    var newDictionary = new Dictionary<TKey, TValue>(_values.Count + 1, _comparer);
-                    foreach (var pair in _values)
+                    var newDictionary = new Dictionary<TKey, TValue>(values.Count + 1, _comparer);
+                    foreach (var pair in values)
                     {
                         newDictionary.Add(pair.Key, pair.Value);
                     }
@@ -87,10 +88,11 @@ namespace AsyncPrimitives
             if (!_values.ContainsKey(key)) return false;
             lock (_syncRoot)
             {
-                if (!_values.ContainsKey(key)) return false;
+                var values = _values;
+                if (!values.ContainsKey(key)) return false;
 
-                var newDictionary = new Dictionary<TKey, TValue>(_values.Count - 1, _comparer);
-                foreach (var pair in _values)
+                var newDictionary = new Dictionary<TKey, TValue>(values.Count - 1, _comparer);
+                foreach (var pair in values)
                 {
                     if (!_comparer.Equals(key, pair.Key))
                     {

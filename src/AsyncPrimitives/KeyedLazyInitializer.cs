@@ -22,7 +22,7 @@ namespace AsyncPrimitives
         private readonly object _syncRoot = new object();
         private readonly Func<TKey, TValue> _valueFactory;
         private readonly IEqualityComparer<TKey> _comparer;
-        private Dictionary<TKey, TValue> _values = new Dictionary<TKey, TValue>();
+        private volatile Dictionary<TKey, TValue> _values = new Dictionary<TKey, TValue>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyedLazyInitializer&lt;TKey, TValue&gt;"/> class.
@@ -67,7 +67,6 @@ namespace AsyncPrimitives
                         newDictionary.Add(pair.Key, pair.Value);
                     }
                     newDictionary.Add(key, newValue);
-                    Thread.MemoryBarrier();
                     _values = newDictionary;
                     return newValue;
                 }
@@ -98,7 +97,6 @@ namespace AsyncPrimitives
                         newDictionary.Add(pair.Key, pair.Value);
                     }
                 }
-                Thread.MemoryBarrier();
                 _values = newDictionary;
                 return true;
             }

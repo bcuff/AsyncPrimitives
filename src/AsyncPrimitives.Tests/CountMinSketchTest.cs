@@ -67,9 +67,14 @@ namespace AsyncPrimitives.Tests
             }
             var allowedError = input.Sum(item => item.count) / input.Length + 1;
             Trace.WriteLine("Allowed Error: " + allowedError);
-            foreach (var item in input)
+            var outputQ = from item in input
+                          let result = sketch.GetEstimatedCount(item.value)
+                          orderby result.Count descending
+                          select new { item, result, };
+            foreach (var row in outputQ)
             {
-                var result = sketch.GetEstimatedCount(item.value);
+                var item = row.item;
+                var result = row.result;
                 Trace.WriteLine(string.Format("{0}: real={1,3} actual={2,3}", item.value, item.count, result.Count));
             }
             var q = from item in input

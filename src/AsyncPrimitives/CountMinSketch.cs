@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 
 namespace AsyncPrimitives
 {
@@ -29,7 +28,7 @@ namespace AsyncPrimitives
         public CountMinSketch(int width, int depth, Func<T, int, int> hashFunc)
         {
             if (hashFunc == null) throw new ArgumentNullException("hashFunc");
-            if (width < 1) throw new ArgumentOutOfRangeException("width");
+            if (width < 2) throw new ArgumentOutOfRangeException("width");
             if (depth < 1) throw new ArgumentOutOfRangeException("depth");
             _width = width;
             _depth = depth;
@@ -60,22 +59,53 @@ namespace AsyncPrimitives
             // 1. Compute hashes ahead of time to avoid holding the lock for very long.
             // 2. Use stackalloc to avoid allocating memory on every call.
             int* indexes = stackalloc int[_depth];
+            long* meanCounts = stackalloc long[_depth];
             for (int i = 0; i < _depth; ++i)
             {
                 indexes[i] = (_hashFunc(value, i) & int.MaxValue) % _width;
             }
-            long resultCount, totalCount;
+            long resultCount = 0, totalCount;
             lock (_syncRoot)
             {
-                resultCount = _counts[indexes[0], 0] += amount;
-                for (int i = 1; i < _depth; ++i)
+                totalCount = _totalCount += amount;
+                for (int i = 0; i < _depth; ++i)
                 {
                     var count = _counts[indexes[i], i] += amount;
-                    resultCount = Math.Min(resultCount, count);
+                    resultCount = i == 0 ? count : Math.Min(resultCount, count);
+                    var noiseEstimate = (totalCount - count) / (_width - 1);
+                    meanCounts[i] = count - noiseEstimate;
                 }
-                totalCount = _totalCount += amount;
             }
-            return new CountMinSketchResult(resultCount, totalCount);
+            var meanCount = Median(meanCounts, _depth);
+            return new CountMinSketchResult(resultCount, meanCount, totalCount);
+        }
+
+        private unsafe static long Median(long* val, int n)
+        {
+            QuickSort(val, n);
+            var midpoint = n / 2;
+            if (n % 2 == 0)
+            {
+                return (val[midpoint - 1] + val[midpoint]) / 2;
+            }
+            return val[midpoint];
+        }
+
+        private unsafe static void QuickSort(long *val, int n)
+        {
+            int i, j;
+            if (n < 2) return;
+            var p = val[n / 2];
+            for (i = 0, j = n - 1;; i++, j--) {
+                while (val[i] < p) i++;
+                while (p < val[j]) j--;
+                if (i >= j) break;
+                var t = val[i];
+                val[i] = val[j];
+                val[j] = t;
+            }
+            QuickSort(val, i);
+            QuickSort(val + i, n - i);
         }
 
         /// <summary>

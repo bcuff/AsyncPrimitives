@@ -13,7 +13,7 @@ namespace AsyncPrimitives
     /// </typeparam>
     public class CountMinSketch<T>
     {
-        readonly object _syncRoot = new object();
+        internal readonly object SyncRoot = new object();
         readonly Func<T, int, int> _hashFunc;
         readonly int _width;
         readonly int _depth;
@@ -65,7 +65,7 @@ namespace AsyncPrimitives
                 indexes[i] = (_hashFunc(value, i) & int.MaxValue) % _width;
             }
             long resultCount, totalCount;
-            lock (_syncRoot)
+            lock (SyncRoot)
             {
                 resultCount = _counts[indexes[0], 0] += amount;
                 for (int i = 1; i < _depth; ++i)
@@ -74,8 +74,21 @@ namespace AsyncPrimitives
                     resultCount = Math.Min(resultCount, count);
                 }
                 totalCount = _totalCount += amount;
+                OnAddSynchronized(value, amount, resultCount, totalCount);
             }
             return new CountMinSketchResult(resultCount, totalCount);
+        }
+
+        internal virtual void OnAddSynchronized(T value, long amount, long count, long totalCount)
+        {
+        }
+
+        internal long TotalCount
+        {
+            get
+            {
+                return _totalCount;
+            }
         }
 
         /// <summary>

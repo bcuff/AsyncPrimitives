@@ -55,6 +55,7 @@
     <Compile Include="AsyncSemaphoreTest.cs" />
     <Compile Include="ConsistentHashMapTest.cs" />
     <Compile Include="CountMinSketchTest.cs" />
+    <Compile Include="HeavyHitterTrackerTest.cs" />
     <Compile Include="KeyedLazyInitializerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StreamExtensionsTest.cs" />

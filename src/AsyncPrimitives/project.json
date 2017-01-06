@@ -1,0 +1,21 @@
+﻿{
+  "version": "1.7.0-*",
+
+  "dependencies": {
+  },
+
+  "frameworks": {
+    "net45": {},
+    "netstandard1.3": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      },
+      "buildOptions": { "define": [ "CORE_CLR" ] }
+    }
+  },
+  "buildOptions": {
+    "allowUnsafe": true,
+    "keyFile": "key.snk"
+  }
+}

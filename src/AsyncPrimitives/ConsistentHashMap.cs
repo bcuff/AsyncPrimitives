@@ -101,7 +101,7 @@ namespace AsyncPrimitives
                     }
                 }
 
-                throw new ApplicationException(string.Format("Out of order elements found at index {0}.", i));
+                throw new Exception(string.Format("Out of order elements found at index {0}.", i));
             }
         }
 

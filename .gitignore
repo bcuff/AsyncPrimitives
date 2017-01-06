@@ -112,3 +112,6 @@ UpgradeLog*.XML
 
 # nuget packages
 *.nupkg
+
+.vs/
+*.lock.json

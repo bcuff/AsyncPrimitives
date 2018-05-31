@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 
 namespace AsyncPrimitives
 {
@@ -54,6 +55,23 @@ namespace AsyncPrimitives
         /// <returns>The estimated count of that value along with the total count.</returns>
         public unsafe CountMinSketchResult Add(T value, long amount)
         {
+            return TryAdd(value, amount, Timeout.Infinite).Value;
+        }
+
+        /// <summary>
+        /// Tries to add the specified amount to the count of the specified value.
+        /// </summary>
+        /// <param name="value">The value to increment.</param>
+        /// <param name="amount">The amount by which to increment.</param>
+        /// <param name="timeout">The lock timeout.</param>
+        /// <returns>null if the lock was not taken or the estimated count of that value along with the total count.</returns>
+        /// <remarks>
+        /// If the lock was not taken the operation will return null.
+        /// Some high performance scenarios may with to use TryAdd(value, amount, 0).
+        /// This will sacrifice some tracking but will avoid lock contention.
+        /// </remarks>
+        public unsafe CountMinSketchResult? TryAdd(T value, long amount, int timeout)
+        {
             if (amount < 0L) throw new ArgumentOutOfRangeException("amount");
             // Since I expect this to get called w/ high frequency from multiple threads...
             // 1. Compute hashes ahead of time to avoid holding the lock for very long.
@@ -64,8 +82,11 @@ namespace AsyncPrimitives
                 indexes[i] = (_hashFunc(value, i) & int.MaxValue) % _width;
             }
             long resultCount, totalCount;
-            lock (SyncRoot)
+            bool taken = false;
+            try
             {
+                Monitor.TryEnter(SyncRoot, timeout, ref taken);
+                if (!taken) return null;
                 resultCount = _counts[indexes[0], 0] += amount;
                 for (int i = 1; i < _depth; ++i)
                 {
@@ -74,6 +95,10 @@ namespace AsyncPrimitives
                 }
                 totalCount = _totalCount += amount;
                 OnAddSynchronized(value, amount, resultCount, totalCount);
+            }
+            finally
+            {
+                if (taken) Monitor.Exit(SyncRoot);
             }
             return new CountMinSketchResult(resultCount, totalCount);
         }
